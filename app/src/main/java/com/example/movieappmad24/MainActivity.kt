@@ -44,6 +44,7 @@ import com.example.movieappmad24.ui.theme.MovieAppMAD24Theme
 import androidx.compose.ui.graphics.vector.ImageVector
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import com.example.movieappmad24.navigation.Navigation
 import com.example.movieappmad24.screens.HomeScreen
 import com.example.movieappmad24.ui.theme.*
 
@@ -51,9 +52,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MovieAppMAD24Theme {
-                HomeScreen()
-            }
+                Navigation(Modifier)
         }
     }
 }
