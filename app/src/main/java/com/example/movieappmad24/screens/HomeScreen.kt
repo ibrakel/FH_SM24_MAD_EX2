@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.movieappmad24.models.Movie
 import com.example.movieappmad24.models.getMovies
+import com.example.movieappmad24.navigation.Screen
 import com.example.movieappmad24.ui.theme.MovieAppMAD24Theme
 import com.example.movieappmad24.ui.theme.Pink40
 import com.example.movieappmad24.ui.theme.Purple40
@@ -74,8 +75,8 @@ fun HomeScreen(navController: NavController) {
             }
         }
     ) { innerPadding ->
-        MovieList(movies = getMovies(), modifier = Modifier.padding(innerPadding)){movieId ->
-            navController.navigate("detailscreen/$movieId")
+        MovieList(movies = getMovies(), modifier = Modifier.padding(innerPadding)){ movieId ->
+            navController.navigate(Screen.Detail.createRoute(movieId))
         }
     }
 }
