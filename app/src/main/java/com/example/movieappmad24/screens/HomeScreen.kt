@@ -2,6 +2,7 @@ package com.example.movieappmad24.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +37,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.movieappmad24.models.Movie
 import com.example.movieappmad24.models.getMovies
@@ -48,16 +50,16 @@ import com.example.movieappmad24.ui.theme.PurpleGrey80
 
 
 @Composable
-fun MovieList(movies: List<Movie> = getMovies(), modifier: Modifier = Modifier) {
+fun MovieList(movies: List<Movie> = getMovies(), modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
     LazyColumn(modifier = modifier) {
         items(movies) { movie ->
-            MovieRow(movie = movie)
+            MovieRow(movie = movie, onItemClick = onItemClick)
         }
     }
 }
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val bottomNavItems = listOf(
         BottomNavItem("Home", Icons.Filled.Home, "home"),
         BottomNavItem("Watchlist", Icons.Filled.Star, "watchlist")
@@ -72,7 +74,9 @@ fun HomeScreen() {
             }
         }
     ) { innerPadding ->
-        MovieList(movies = getMovies(), modifier = Modifier.padding(innerPadding))
+        MovieList(movies = getMovies(), modifier = Modifier.padding(innerPadding)){movieId ->
+            navController.navigate("detailscreen/$movieId")
+        }
     }
 }
 @Composable
@@ -101,13 +105,14 @@ data class BottomNavItem(val name: String, val icon: ImageVector, val route: Str
 
 
 @Composable
-fun MovieRow(movie: Movie) {
+fun MovieRow(movie: Movie, onItemClick: (String) -> Unit) {
     var showDetails by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { onItemClick(movie.id) },
         colors = CardDefaults.cardColors(containerColor = PurpleGrey80),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
@@ -179,6 +184,6 @@ fun ExpandToggleButton(showDetails: Boolean, onToggle: (Boolean) -> Unit) {
 @Composable
 fun DefaultPreview(){
     MovieAppMAD24Theme {
-        MovieList(movies = getMovies())
+        MovieList(movies = getMovies(), onItemClick = { /* No-op for preview */ })
     }
 }

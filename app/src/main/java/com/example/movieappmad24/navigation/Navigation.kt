@@ -7,17 +7,32 @@ import androidx.navigation.compose.rememberNavController
 import com.example.movieappmad24.screens.DetailScreen
 import com.example.movieappmad24.screens.HomeScreen
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
+
+
+sealed class Screen(val route: String) {
+    object Home : Screen("homescreen")
+    object Detail : Screen("detailscreen/{movieId}") {
+        fun createRoute(movieId: String) = "detailscreen/$movieId"
+    }
+}
 
 @Composable
-fun Navigation(modifier: Modifier) {
-    val navController = rememberNavController() // create a NavController instance
-    NavHost(navController = navController, // pass the NavController to NavHost
-        startDestination = "homescreen") { // pass a start destination
-        composable(route = "homescreen"){
-            HomeScreen()
+fun Navigation() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
+        composable(route = Screen.Home.route) {
+            // Assuming HomeScreen accepts NavController as a parameter
+            HomeScreen(navController = navController)
         }
-        composable("detailscreen") {
-            DetailScreen()
+        composable(
+            route = Screen.Detail.route,
+            arguments = listOf(navArgument("movieId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            // Assuming DetailScreen accepts a movieId as a parameter
+            DetailScreen(movieId = backStackEntry.arguments?.getString("movieId") ?: "")
         }
     }
 }
