@@ -39,6 +39,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.movieappmad24.components.BottomBar
+import com.example.movieappmad24.components.ImageSection
+import com.example.movieappmad24.components.MovieRow
+import com.example.movieappmad24.components.MovieTopBar
 import com.example.movieappmad24.models.Movie
 import com.example.movieappmad24.models.getMovies
 import com.example.movieappmad24.navigation.Screen
@@ -80,104 +84,10 @@ fun HomeScreen(navController: NavController) {
         }
     }
 }
-@Composable
-fun BottomBar(items: List<BottomNavItem>, currentRoute: String, onItemSelected: (String) -> Unit) {
-    NavigationBar {
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.name) },
-                label = { Text(item.name) },
-                selected = currentRoute == item.route,
-                onClick = { onItemSelected(item.route) }
-            )
-        }
-    }
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MovieTopBar() {
-    CenterAlignedTopAppBar(
-        title = { Text("MovieAppMAD24") }
-    )
-}
+
+
 
 data class BottomNavItem(val name: String, val icon: ImageVector, val route: String)
-
-
-
-@Composable
-fun MovieRow(movie: Movie, onItemClick: (String) -> Unit) {
-    var showDetails by remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onItemClick(movie.id) },
-        colors = CardDefaults.cardColors(containerColor = PurpleGrey80),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        Column {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                TitleSection(movie.title)
-                ExpandToggleButton(showDetails) { showDetails = it }
-            }
-            ImageSection(imageUrl = movie.images.firstOrNull())
-            AnimatedVisibility(visible = showDetails) {
-                DetailSection(movie)
-            }
-        }
-    }
-}
-
-@Composable
-fun ImageSection(imageUrl: String?) {
-    imageUrl?.let {
-        Image(
-            painter = rememberAsyncImagePainter(it),
-            contentDescription = "Movie image",
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
-        )
-    }
-}
-
-@Composable
-fun TitleSection(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.headlineMedium.copy(color = Purple40),
-        modifier = Modifier
-            .padding(8.dp)
-    )
-}
-
-@Composable
-fun DetailSection(movie: Movie) {
-    Column(modifier = Modifier.padding(8.dp)) {
-        Text("Director: ${movie.director}", style = MaterialTheme.typography.bodyMedium)
-        Text("Year: ${movie.year}", style = MaterialTheme.typography.bodyMedium)
-        Text("Genre: ${movie.genre}", style = MaterialTheme.typography.bodyMedium)
-        Text("Rating: ${movie.rating}", style = MaterialTheme.typography.bodyMedium)
-        Text("Plot: ${movie.plot}", style = MaterialTheme.typography.bodyMedium)
-        Text("Actors: ${movie.actors}", style = MaterialTheme.typography.bodyMedium)
-    }
-}
-
-@Composable
-fun ExpandToggleButton(showDetails: Boolean, onToggle: (Boolean) -> Unit) {
-    IconButton(onClick = { onToggle(!showDetails) }) {
-        Icon(
-            imageVector = if (showDetails) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-            contentDescription = if (showDetails) "Hide details" else "Show details",
-            tint = Pink40
-        )
-    }
-}
-
-
 
 
 

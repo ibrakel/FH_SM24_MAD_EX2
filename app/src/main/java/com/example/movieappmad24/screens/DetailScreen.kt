@@ -34,6 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.movieappmad24.components.DetailSection
+import com.example.movieappmad24.components.ExpandToggleButton
+import com.example.movieappmad24.components.ImageSection
+import com.example.movieappmad24.components.TitleSection
 import com.example.movieappmad24.models.Movie
 import com.example.movieappmad24.models.getMovies
 
