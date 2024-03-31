@@ -2,12 +2,16 @@ package com.example.movieappmad24.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,26 +24,36 @@ import com.example.movieappmad24.models.Movie
 import com.example.movieappmad24.ui.theme.PurpleGrey80
 
 @Composable
-fun MovieRow(movie: Movie, onItemClick: (String) -> Unit) {
-    var showDetails by remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onItemClick(movie.id) },
-        colors = CardDefaults.cardColors(containerColor = PurpleGrey80),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+fun MovieRow(movie: Movie, onMovieClick: (String) -> Unit){
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .padding(5.dp)
+        .clickable { onMovieClick(movie.id) },
+        shape = ShapeDefaults.Large,
+        elevation = CardDefaults.cardElevation(10.dp)
     ) {
         Column {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                TitleSection(movie.title)
-                ExpandToggleButton(showDetails) { showDetails = it }
-            }
-            ImageSection(imageUrl = movie.images.firstOrNull())
-            AnimatedVisibility(visible = showDetails) {
-                DetailSection(movie)
-            }
+
+            MovieCardHeader(imageUrl = movie.images[0])
+
+
+            MovieDetails(modifier = Modifier.padding(12.dp), movie = movie)
+
         }
+    }
+}
+
+@Composable
+fun MovieCardHeader(imageUrl: String) {
+    Box(
+        modifier = Modifier
+            .height(150.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+
+        MovieImage(imageUrl)
+
+        FavoriteIcon()
     }
 }
