@@ -1,5 +1,6 @@
 package com.example.movieappmad24
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +29,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,153 +44,22 @@ import com.example.movieappmad24.models.Movie
 import com.example.movieappmad24.models.getMovies
 import com.example.movieappmad24.ui.theme.MovieAppMAD24Theme
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import com.example.movieappmad24.components.BottomNavigation
+import com.example.movieappmad24.navigation.Navigation
+import com.example.movieappmad24.screens.HomeScreen
 import com.example.movieappmad24.ui.theme.*
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MovieAppMAD24Theme {
-                MainScreen()
+                Navigation() // Use the new navigation component
+                }
             }
         }
     }
-}
-
-@Composable
-fun MovieList(movies: List<Movie> = getMovies(), modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier) {
-        items(movies) { movie ->
-            MovieRow(movie = movie)
-        }
-    }
-}
-
-@Composable
-fun MainScreen() {
-    val bottomNavItems = listOf(
-        BottomNavItem("Home", Icons.Filled.Home, "home"),
-        BottomNavItem("Watchlist", Icons.Filled.Star, "watchlist")
-    )
-    var currentRoute by remember { mutableStateOf("home") }
-
-    Scaffold(
-        topBar = { MovieTopBar() },
-        bottomBar = {
-            BottomBar(bottomNavItems, currentRoute) { route ->
-                currentRoute = route
-            }
-        }
-    ) { innerPadding ->
-        MovieList(movies = getMovies(), modifier = Modifier.padding(innerPadding))
-    }
-}
-@Composable
-fun BottomBar(items: List<BottomNavItem>, currentRoute: String, onItemSelected: (String) -> Unit) {
-    NavigationBar {
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.name) },
-                label = { Text(item.name) },
-                selected = currentRoute == item.route,
-                onClick = { onItemSelected(item.route) }
-            )
-        }
-    }
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MovieTopBar() {
-    CenterAlignedTopAppBar(
-        title = { Text("MovieAppMAD24") }
-    )
-}
-
-data class BottomNavItem(val name: String, val icon: ImageVector, val route: String)
-
-
-
-@Composable
-fun MovieRow(movie: Movie) {
-    var showDetails by remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        colors = CardDefaults.cardColors(containerColor = PurpleGrey80),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        Column {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                TitleSection(movie.title)
-                ExpandToggleButton(showDetails) { showDetails = it }
-            }
-            ImageSection(imageUrl = movie.images.firstOrNull())
-            AnimatedVisibility(visible = showDetails) {
-                DetailSection(movie)
-            }
-        }
-    }
-}
-
-@Composable
-fun ImageSection(imageUrl: String?) {
-    imageUrl?.let {
-        Image(
-            painter = rememberAsyncImagePainter(it),
-            contentDescription = "Movie image",
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
-        )
-    }
-}
-
-@Composable
-fun TitleSection(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.headlineMedium.copy(color = Purple40),
-        modifier = Modifier
-            .padding(8.dp)
-    )
-}
-
-@Composable
-fun DetailSection(movie: Movie) {
-    Column(modifier = Modifier.padding(8.dp)) {
-        Text("Director: ${movie.director}", style = MaterialTheme.typography.bodyMedium)
-        Text("Year: ${movie.year}", style = MaterialTheme.typography.bodyMedium)
-        Text("Genre: ${movie.genre}", style = MaterialTheme.typography.bodyMedium)
-        Text("Rating: ${movie.rating}", style = MaterialTheme.typography.bodyMedium)
-        Text("Plot: ${movie.plot}", style = MaterialTheme.typography.bodyMedium)
-        Text("Actors: ${movie.actors}", style = MaterialTheme.typography.bodyMedium)
-    }
-}
-
-@Composable
-fun ExpandToggleButton(showDetails: Boolean, onToggle: (Boolean) -> Unit) {
-    IconButton(onClick = { onToggle(!showDetails) }) {
-        Icon(
-            imageVector = if (showDetails) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-            contentDescription = if (showDetails) "Hide details" else "Show details",
-            tint = Pink40
-        )
-    }
-}
-
-
-
-
-
-@Preview
-@Composable
-fun DefaultPreview(){
-    MovieAppMAD24Theme {
-       MovieList(movies = getMovies())
-    }
-}
