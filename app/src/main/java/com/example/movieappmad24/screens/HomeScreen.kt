@@ -40,11 +40,10 @@ fun MovieList(modifier: Modifier = Modifier, movies: List<Movie>, onMovieClick: 
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val bottomNavItems = listOf(
+    listOf(
         BottomNavItem("Home", Icons.Filled.Home, "home"),
         BottomNavItem("Watchlist", Icons.Filled.Star, "watchlist")
     )
-    var currentRoute by remember { mutableStateOf("home") }
 
     Scaffold(
         topBar = { MovieTopBar() },
