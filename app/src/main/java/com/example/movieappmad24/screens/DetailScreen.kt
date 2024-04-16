@@ -1,8 +1,8 @@
 package com.example.movieappmad24.screens
 
+import MovieTrailerPlayer
 import MoviesViewModel
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieappmad24.components.BottomNavigation
@@ -50,6 +50,7 @@ fun DetailScreen(navController: NavController, movieId: String, viewModel: Movie
             Column(modifier = Modifier.padding(innerPadding)) {
                 // No click action is necessary for the movie itself in the detail view
                 MovieRow(movie = movie, onMovieClick = { }, onFavoriteClick = { viewModel.toggleFavorite(movie.id) })
+                MovieTrailerPlayer(LocalContext.current)
                 MovieImagesGallery(movie)
             }
         } ?: run {
