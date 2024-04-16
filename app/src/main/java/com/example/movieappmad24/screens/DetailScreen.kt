@@ -18,7 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieappmad24.components.BottomNavigation
 import com.example.movieappmad24.components.MovieRow
@@ -26,13 +28,13 @@ import com.example.movieappmad24.models.Movie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(navController: NavHostController, movieId: String, viewModel: MoviesViewModel) {
-    val movie = viewModel.getMovieById(movieId)  // Assuming ViewModel provides a method to get movie by ID
+fun DetailScreen(navController: NavController, movieId: String, viewModel: MoviesViewModel) {
+    val movieState = viewModel.getMovieById(movieId).collectAsState().value  // Collect the movie state as State
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(movie?.title ?: "Movie Details") },
+                title = { Text(movieState?.title ?: "Movie Details") },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -44,11 +46,15 @@ fun DetailScreen(navController: NavHostController, movieId: String, viewModel: M
             BottomNavigation(navController)
         }
     ) { innerPadding ->
-        movie?.let { movie ->
+        movieState?.let { movie ->
             Column(modifier = Modifier.padding(innerPadding)) {
-                MovieRow(movie = movie, onMovieClick = { }, onFavoriteClick = viewModel::toggleFavorite)
+                // No click action is necessary for the movie itself in the detail view
+                MovieRow(movie = movie, onMovieClick = { }, onFavoriteClick = { viewModel.toggleFavorite(movie.id) })
                 MovieImagesGallery(movie)
             }
+        } ?: run {
+            // Handle the case where the movie is null
+            Text("Movie details not available", modifier = Modifier.padding(innerPadding))
         }
     }
 }

@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.example.movieappmad24.models.Movie
 import com.example.movieappmad24.models.getMovies
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -11,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class MoviesViewModel : ViewModel() {
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())
-    val movies = _movies.asStateFlow()
+    val movies: StateFlow<List<Movie>> = _movies.asStateFlow()
     private val _favorites = MutableStateFlow<List<Movie>>(emptyList())
     val favorites: StateFlow<List<Movie>> = _favorites.asStateFlow()
 
@@ -26,10 +27,10 @@ class MoviesViewModel : ViewModel() {
     }
 
     fun toggleFavorite(movieId: String) {
-        val updatedMovies = _movies.value.map { movie ->
-            if (movie.id == movieId) movie.copy(isFavorite = !movie.isFavorite) else movie
+        _movies.value = _movies.value.map { movie ->
+            if (movie.id == movieId) movie.copy(isFavorite = !movie.isFavorite)
+            else movie
         }
-        _movies.value = updatedMovies
     }
 
     private fun observeFavorites() {
@@ -41,7 +42,10 @@ class MoviesViewModel : ViewModel() {
             }
         }
     }
-    fun getMovieById(movieId: String): Movie? {
-        return _movies.value.find { it.id == movieId }
+    fun getMovieById(movieId: String): StateFlow<Movie?> {
+        // Return a StateFlow that always emits the current movie for the given ID or null if it doesn't exist
+        return _movies.map { movies ->
+            movies.find { it.id == movieId }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     }
 }

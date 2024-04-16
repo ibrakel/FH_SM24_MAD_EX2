@@ -12,6 +12,8 @@ import androidx.compose.material.icons.filled.Star
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,21 +37,23 @@ fun MovieList(modifier: Modifier = Modifier, movies: List<Movie>, onMovieClick: 
     }
 }
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun HomeScreen(navController: NavController, viewModel: MoviesViewModel) {
+    val movies by viewModel.movies.collectAsState()  // Collect movies as state
+
     Scaffold(
         topBar = { MovieTopBar() },
         bottomBar = { BottomNavigation(navController = navController) }
     ) { innerPadding ->
         MovieList(
-            movies = viewModel.movies.value,  // Ensure you are accessing the StateFlow value
+            movies = movies,  // Pass the collected state
             modifier = Modifier.padding(innerPadding),
             onMovieClick = { movieId -> navController.navigate(Screen.Detail.createRoute(movieId)) },
             onFavoriteClick = viewModel::toggleFavorite
         )
     }
 }
+
 
 
 
